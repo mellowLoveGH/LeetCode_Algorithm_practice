@@ -1,0 +1,144 @@
+# 1. 单个数字，例如1，2，3
+# 2. 两个相同数字，例如：11，22，33
+# 3. 连续的五个数字， 例如：12345，56789
+# 4. 连续的三个成对数字， 例如：112233，223344
+# 5. 按照上述四种规则任意对A进行分组，最少的的组数是多少？
+
+# 输入：List A = [N1, N2 ... N9, N10]
+
+# N1 ~ N10 代表数字的个数，N1代表数字【1】的个数，N10代表数字【10】的个数，满足以下条件：
+
+# 0 <= N1 ~ N10 <=4
+
+# 0 < (N1 + N2 + ... + N10) <= 40
+
+# 输出：int count
+
+# Example
+# Input: A = {1,2,3,4,5,5,5}
+# Output: 2
+# Analyse:
+# {{1,2,3,4,5}, {5,5}}
+def group(nums):
+  dic = {}
+  for i in nums:
+    if i not in dic:
+      dic[i] = 1
+    else:
+      dic[i] = dic[i] + 1
+  #print(dic)
+  return dic
+
+def group4(start):
+  if start <=8:
+    dic = {}
+    i = start
+    while i<start+3:
+      dic[i] = 2
+      i = i + 1
+    return dic
+  return {}
+
+def group3(start):
+  if start<=6:
+    dic = {}
+    i = start
+    while i<start+5:
+      dic[i] = 1
+      i = i + 1
+    return dic
+  return {}
+
+def group2(start):
+  dic = {}
+  dic[start] = 2
+  return dic
+
+def group1(start):
+  dic = {}
+  dic[start] = 1
+  return dic
+
+def include(dic, sub):
+  #print(dic, sub)
+  for i in sub:
+    v = sub[i]    
+    if i not in dic:
+      return False
+    v1 = dic[i]    
+    if v>v1:
+      return False
+  return True
+
+def minus(dic, sub):
+  for i in sub:
+    v = sub[i]
+    v1 = dic[i]
+    dic[i] = v1 - v
+  return dic
+
+def findMin(A):
+  L = len(A)
+  if L == 0:
+    return 0
+  if L == 1:
+    return 1
+  if L == 2:
+    if A[0] == A[1]:
+      return 1
+    else:
+      return 2
+  #
+  N = len(A)
+  tmpA = group(A)
+  flag = True
+  mn = 0
+  col = []
+  for j in range(2):
+    # group 4
+    for i in range(1, 9):
+      g4 = group4(i)
+      if include(tmpA, g4):
+        tmpA = minus(tmpA, g4)
+        mn = mn + 1
+        col.append(g4)
+  
+  for j in range(4):
+    # group 3
+    for i in range(1, 7):
+      g3 = group3(i)
+      if include(tmpA, g3):
+        tmpA = minus(tmpA, g3)
+        mn = mn + 1
+        col.append(g3)
+
+  for j in range(2):
+    # group 2
+    for i in range(1, 11):
+      g2 = group2(i)
+      if include(tmpA, g2):
+        tmpA = minus(tmpA, g2)
+        mn = mn + 1
+        col.append(g2)
+
+  for j in range(4):
+    # group 1
+    for i in range(1, 11):
+      g1 = group1(i)
+      if include(tmpA, g1):
+        tmpA = minus(tmpA, g1)
+        mn = mn + 1
+        col.append(g1)
+  print(col)
+  return mn 
+
+
+A = [1,2,3,4,5,5,5, 6, 9,9, 10]
+A = [1,2,3,4,5,5,5, 6, 9,9, 10]
+group(A)
+#group4(10)
+#group3(8)
+#group2(7)
+#include( group(A), group3(2) )
+#minus ( group(A), group3(1) )
+findMin(A)
